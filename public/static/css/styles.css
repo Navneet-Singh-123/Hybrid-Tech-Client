@@ -1,0 +1,12 @@
+#nprogress .bar {
+  height: 4px !important;
+}
+
+.nav a {
+  transition: 0.3s ease-in-out all;
+}
+
+.nav a:hover {
+  border-radius: 0px;
+  transition: 0.3s ease-in-out all;
+}
