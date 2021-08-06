@@ -1,69 +1,96 @@
+import dynamic from "next/dynamic";
 import Layout from "../../../components/Layout";
 import withAdmin from "../../withAdmin";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API } from "../../../config";
 import { showErrorMessage, showSuccessMessage } from "../../../helpers/alerts";
+import Resizer from "react-image-file-resizer";
+import "react-quill/dist/quill.bubble.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const Create = ({ user, token }) => {
   const [state, setState] = useState({
     name: "",
-    content: "",
     error: "",
     success: "",
-    formData: process.browser && new FormData(),
     buttonText: "Create",
-    imageUploadText: "Upload Image",
+    image: "",
   });
 
-  const {
-    name,
-    content,
-    success,
-    error,
-    formData,
-    buttonText,
-    imageUploadText,
-  } = state;
+  const [content, setContent] = useState("");
+  const [imageUploadBtnName, setImageUploadBtnName] = useState("Upload Image");
+
+  const { name, success, error, image, buttonText } = state;
+
+  const handleContent = (e) => {
+    setContent(e);
+    setState({ ...state, success: "", error: "" });
+  };
 
   const handleChange = (name) => (e) => {
-    const value =
-      name === "image" && e.target.files.length >= 1
-        ? e.target.files[0]
-        : e.target.value;
-    const imageName =
-      name === "image" && e.target.files.length >= 1
-        ? e.target.files[0].name
-        : "Upload Image";
-    formData.set(name, value);
     setState({
       ...state,
-      [name]: value,
+      [name]: e.target.value,
       error: "",
       success: "",
-      imageUploadText: imageName,
+      buttonText: "Create",
     });
+  };
+
+  const handleImage = (event) => {
+    var fileInput = false;
+    if (event.target.files.length >= 1 && event.target.files[0]) {
+      fileInput = true;
+    }
+    setImageUploadBtnName(event.target.files[0].name);
+    if (fileInput) {
+      try {
+        Resizer.imageFileResizer(
+          event.target.files[0],
+          300,
+          300,
+          "JPEG",
+          100,
+          0,
+          (uri) => {
+            setState({ ...state, image: uri, success: "", error: "" });
+          },
+          "base64",
+          200,
+          200
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setState({ ...state, buttonText: "Creating" });
     try {
-      const response = await axios.post(`${API}/category`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        `${API}/category`,
+        { name, content, image },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(response);
       setState({
         ...state,
         name: "",
         content: "",
-        formData: process.browser && new FormData(),
         buttonText: "Created",
-        imageUploadText: "Upload Image",
         success: `${response.data.name} is created`,
+        image: "",
       });
+      setImageUploadBtnName("Upload Image");
+      setContent("");
     } catch (error) {
       console.log(error.response.data.error);
       setState({
@@ -88,20 +115,22 @@ const Create = ({ user, token }) => {
       </div>
       <div className="form-group">
         <label className="text-muted">Content</label>
-        <textarea
-          className="form-control"
-          onChange={handleChange("content")}
+        <ReactQuill
+          theme="bubble"
           value={content}
-          required
+          onChange={handleContent}
+          placeholder="Write something..."
+          className="pb-5 mb-3"
+          style={{ border: "1px solid #666" }}
         />
       </div>
       <div className="form-group">
         <label className="btn btn-outline-secondary">
-          {imageUploadText}
+          {imageUploadBtnName}
           <input
             type="file"
             className="form-control"
-            onChange={handleChange("image")}
+            onChange={handleImage}
             required
             hidden
             accept="image/*"
