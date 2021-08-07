@@ -81,16 +81,16 @@ const Create = ({ user, token }) => {
         }
       );
       console.log(response);
+      setContent("");
+      setImageUploadBtnName("Upload Image");
       setState({
         ...state,
         name: "",
-        content: "",
         buttonText: "Created",
         success: `${response.data.name} is created`,
         image: "",
       });
-      setImageUploadBtnName("Upload Image");
-      setContent("");
+      console.log(state);
     } catch (error) {
       console.log(error.response.data.error);
       setState({

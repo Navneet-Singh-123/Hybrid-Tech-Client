@@ -32,10 +32,15 @@ const Layout = ({ children }) => {
           width: "100%",
         }}
       >
-        <div>
+        <div style={{ display: "flex" }}>
           <li className="nav-item">
             <Link href="/">
               <a className="nav-link text-dark">Home</a>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link href="/user/link/create">
+              <a className="nav-link text-dark">Submit a link</a>
             </Link>
           </li>
         </div>
