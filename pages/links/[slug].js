@@ -5,6 +5,7 @@ import axios from "axios";
 import { API } from "../../config";
 import renderHTML from "react-render-html";
 import moment from "moment";
+import InfiniteScroll from "react-infinite-scroller";
 
 const Links = ({
   query,
@@ -72,17 +73,6 @@ const Links = ({
     setSkip(toSkip);
   };
 
-  const loadMoreButton = () => {
-    return (
-      size > 0 &&
-      size >= limit && (
-        <button className="btn btn-outline-primary btn-lg" onClick={loadMore}>
-          Load More
-        </button>
-      )
-    );
-  };
-
   return (
     <Layout>
       <div className="row">
@@ -110,7 +100,16 @@ const Links = ({
           <p>Show popular links</p>
         </div>
       </div>
-      <div className="text-center pt-4 pb-5">{loadMoreButton()}</div>
+      <div className="row">
+        <div className="col-md-12 text-center">
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={loadMore}
+            hasMore={size > 0 && size >= limit}
+            loader={<img src="/static/images/loading.gif" alt="Loading..." />}
+          ></InfiniteScroll>
+        </div>
+      </div>
     </Layout>
   );
 };
