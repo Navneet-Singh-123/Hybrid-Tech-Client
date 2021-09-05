@@ -93,23 +93,23 @@ const Links = ({
         </div>
       </div>
       <br />
-      <div className="row">
-        <div className="col-md-8"> {listOfLinks()}</div>
-        <div className="col-md-4">
-          <h2 className="lead">Most popular in {category.name}</h2>
-          <p>Show popular links</p>
+
+      <InfiniteScroll
+        pageStart={0}
+        loadMore={loadMore}
+        hasMore={size > 0 && size >= limit}
+        loader={
+          <img src="/static/images/loading.gif" alt="Loading..." key={0} />
+        }
+      >
+        <div className="row">
+          <div className="col-md-8"> {listOfLinks()}</div>
+          <div className="col-md-4">
+            <h2 className="lead">Most popular in {category.name}</h2>
+            <p>Show popular links</p>
+          </div>
         </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12 text-center">
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={loadMore}
-            hasMore={size > 0 && size >= limit}
-            loader={<img src="/static/images/loading.gif" alt="Loading..." />}
-          ></InfiniteScroll>
-        </div>
-      </div>
+      </InfiniteScroll>
     </Layout>
   );
 };
