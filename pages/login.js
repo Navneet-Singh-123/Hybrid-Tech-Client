@@ -3,24 +3,24 @@ import Layout from "../components/Layout";
 import Link from "next/link";
 import Router from "next/router";
 import axios from "axios";
-import { showErrorMessage, showSuccessMessage } from "../helpers/alerts";
+import { showSuccessMessage, showErrorMessage } from "../helpers/alerts";
 import { API } from "../config";
 import { authenticate, isAuth } from "../helpers/auth";
 
 const Login = () => {
   const [state, setState] = useState({
-    email: "",
-    password: "",
+    email: "snavneet561@gmail.com",
+    password: "123456",
     error: "",
-    buttonText: "Login",
     success: "",
+    buttonText: "Login",
   });
 
   useEffect(() => {
     isAuth() && Router.push("/");
   }, []);
 
-  const { buttonText, email, password, error, success } = state;
+  const { email, password, error, success, buttonText } = state;
 
   const handleChange = (name) => (e) => {
     setState({
@@ -34,23 +34,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setState({ ...state, buttonText: "Logging In" });
+    setState({ ...state, buttonText: "Logging in" });
     try {
       const response = await axios.post(`${API}/login`, {
         email,
         password,
       });
+      // console.log(response); // data > token / user
       authenticate(response, () =>
         isAuth() && isAuth().role === "admin"
           ? Router.push("/admin")
           : Router.push("/user")
       );
-    } catch (err) {
+    } catch (error) {
       console.log(error);
       setState({
         ...state,
         buttonText: "Login",
-        error: err.response.data.error,
+        error: error.response.data.error,
       });
     }
   };
@@ -60,20 +61,20 @@ const Login = () => {
       <div className="form-group">
         <input
           value={email}
+          onChange={handleChange("email")}
           type="email"
           className="form-control"
-          placeholder="Email"
-          onChange={handleChange("email")}
+          placeholder="Type your email"
           required
         />
       </div>
       <div className="form-group">
         <input
           value={password}
+          onChange={handleChange("password")}
           type="password"
           className="form-control"
-          placeholder="Password"
-          onChange={handleChange("password")}
+          placeholder="Type your password"
           required
         />
       </div>
@@ -82,6 +83,7 @@ const Login = () => {
       </div>
     </form>
   );
+
   return (
     <Layout>
       <div className="col-md-6 offset-md-3">

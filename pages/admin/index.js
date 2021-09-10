@@ -2,7 +2,7 @@ import Layout from "../../components/Layout";
 import withAdmin from "../withAdmin";
 import Link from "next/link";
 
-const Admin = ({ user, token }) => (
+const Admin = ({ user }) => (
   <Layout>
     <h1>Admin Dashboard</h1>
     <br />
@@ -17,6 +17,11 @@ const Admin = ({ user, token }) => (
           <li className="nav-item">
             <Link href="/admin/category/read">
               <a className="nav-link">All categories</a>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link href="/admin/link/read">
+              <a className="nav-link">All Links</a>
             </Link>
           </li>
         </ul>

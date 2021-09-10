@@ -1,9 +1,9 @@
-import { withRouter } from "next/router";
 import { useState, useEffect } from "react";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import { showErrorMessage, showSuccessMessage } from "../../../helpers/alerts";
+import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import { API } from "../../../config";
+import { withRouter } from "next/router";
 import Layout from "../../../components/Layout";
 
 const ActivateAccount = ({ router }) => {
@@ -14,7 +14,6 @@ const ActivateAccount = ({ router }) => {
     success: "",
     error: "",
   });
-
   const { name, token, buttonText, success, error } = state;
 
   useEffect(() => {
@@ -27,10 +26,12 @@ const ActivateAccount = ({ router }) => {
 
   const clickSubmit = async (e) => {
     e.preventDefault();
+    // console.log('activate acccount');
     setState({ ...state, buttonText: "Activating" });
+
     try {
       const response = await axios.post(`${API}/register/activate`, { token });
-      console.log(response);
+      // console.log('account activate response', response)
       setState({
         ...state,
         name: "",
@@ -51,7 +52,7 @@ const ActivateAccount = ({ router }) => {
     <Layout>
       <div className="row">
         <div className="col-md-6 offset-md-3">
-          <h2>Hello {name}, Ready to activate your account?</h2>
+          <h1>Hello {name}, Ready to activate your account?</h1>
           <br />
           {success && showSuccessMessage(success)}
           {error && showErrorMessage(error)}

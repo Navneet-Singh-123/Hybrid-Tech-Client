@@ -1,10 +1,10 @@
+import { useState } from "react";
 import Layout from "../../components/Layout";
-import React, { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { API } from "../../config";
 import renderHTML from "react-render-html";
 import moment from "moment";
+import { API } from "../../config";
 import InfiniteScroll from "react-infinite-scroller";
 
 const Links = ({
@@ -13,15 +13,15 @@ const Links = ({
   links,
   totalLinks,
   linksLimit,
-  linksSkip,
+  linkSkip,
 }) => {
   const [allLinks, setAllLinks] = useState(links);
   const [limit, setLimit] = useState(linksLimit);
-  const [skip, setSkip] = useState(linksSkip);
+  const [skip, setSkip] = useState(linkSkip);
   const [size, setSize] = useState(totalLinks);
 
-  const handleClick = async (id) => {
-    const response = await axios.put(`${API}/links/click-count`, { id });
+  const handleClick = async (linkId) => {
+    await axios.put(`${API}/click-count`, { linkId });
     loadUpdatedLinks();
   };
 
@@ -32,8 +32,8 @@ const Links = ({
 
   const listOfLinks = () =>
     allLinks.map((l, i) => (
-      <div key={i} className="row alert alert-primary p-2 mr-1 ml-1">
-        <div className="col-md-7" onClick={() => handleClick(l._id)}>
+      <div key={i} className="row alert alert-primary p-2">
+        <div className="col-md-8" onClick={(e) => handleClick(l._id)}>
           <a href={l.url} target="_blank">
             <h5 className="pt-2">{l.title}</h5>
             <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
@@ -41,13 +41,13 @@ const Links = ({
             </h6>
           </a>
         </div>
-        <div className="col-md-5 pt-2">
-          <span className="pull-right float-right">
+        <div className="col-md-4 pt-2">
+          <span className="pull-right">
             {moment(l.createdAt).fromNow()} by {l.postedBy.name}
           </span>
           <br />
-          <span className="badge text-secondary pull-right float-right pt-2">
-            {l.views} {l.views === 1 || l.views === 0 ? "view" : "views"}
+          <span className="badge text-secondary pull-right">
+            {l.clicks} clicks
           </span>
         </div>
         <div className="col-md-12">
@@ -55,7 +55,7 @@ const Links = ({
             {l.type} / {l.medium}
           </span>
           {l.categories.map((c, i) => (
-            <span className="badge text-success" key={i}>
+            <span key={i} className="badge text-success">
               {c.name}
             </span>
           ))}
@@ -63,12 +63,19 @@ const Links = ({
       </div>
     ));
 
+  const onlyUnique = (value, index, self) => {
+    return self.indexOf(value) === index;
+  };
+
   const loadMore = async () => {
     let toSkip = skip + limit;
     const response = await axios.get(
-      `${API}/category/${query.slug}?limit=${limit}&skip=${toSkip}`
+      `${API}/category/${query.slug}?skip=${toSkip}&limit=${limit}`
     );
+    response.data.links = response.data.links.filter(onlyUnique);
     setAllLinks([...allLinks, ...response.data.links]);
+    console.log("allLinks", allLinks);
+    console.log("response.data.links.length", response.data.links.length);
     setSize(response.data.links.length);
     setSkip(toSkip);
   };
@@ -93,20 +100,27 @@ const Links = ({
         </div>
       </div>
       <br />
+      {/*<div className="row">
+                <div className="col-md-8">{listOfLinks()}</div>
+                <div className="col-md-4">
+                    <h2 className="lead">Most popular in {category.name}</h2>
+                    <p>show popular links</p>
+                </div>
+            </div>*/}
+
+      {/*<div className="text-center pt-4 pb-5">{loadMoreButton()}</div>*/}
 
       <InfiniteScroll
         pageStart={0}
         loadMore={loadMore}
         hasMore={size > 0 && size >= limit}
-        loader={
-          <img src="/static/images/loading.gif" alt="Loading..." key={0} />
-        }
+        loader={<img key={0} src="/static/images/loading.gif" alt="loading" />}
       >
         <div className="row">
-          <div className="col-md-8"> {listOfLinks()}</div>
+          <div className="col-md-8">{listOfLinks()}</div>
           <div className="col-md-4">
             <h2 className="lead">Most popular in {category.name}</h2>
-            <p>Show popular links</p>
+            <p>show popular links</p>
           </div>
         </div>
       </InfiniteScroll>
@@ -116,9 +130,9 @@ const Links = ({
 
 Links.getInitialProps = async ({ query, req }) => {
   let skip = 0;
-  let limit = 3;
+  let limit = 2;
   const response = await axios.get(
-    `${API}/category/${query.slug}?limit=${limit}&skip=${skip}`
+    `${API}/category/${query.slug}?skip=${skip}&limit=${limit}`
   );
   return {
     query,
@@ -126,7 +140,7 @@ Links.getInitialProps = async ({ query, req }) => {
     links: response.data.links,
     totalLinks: response.data.links.length,
     linksLimit: limit,
-    linksSkip: skip,
+    linkSkip: skip,
   };
 };
 

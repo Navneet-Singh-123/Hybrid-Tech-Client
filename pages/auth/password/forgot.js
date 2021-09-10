@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
-import { showErrorMessage, showSuccessMessage } from "../../../helpers/alerts";
+import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import { API } from "../../../config";
+import Router from "next/router";
 import Layout from "../../../components/Layout";
 
 const ForgotPassword = () => {
@@ -11,7 +12,6 @@ const ForgotPassword = () => {
     success: "",
     error: "",
   });
-
   const { email, buttonText, success, error } = state;
 
   const handleChange = (e) => {
@@ -20,19 +20,23 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // console.log('post email to ', email);
     try {
-      setState({ ...state, buttonText: "Sending" });
-      const res = await axios.put(`${API}/forgot-password`, { email });
-      //   console.log("Forgot password: ", res);
+      const response = await axios.put(`${API}/forgot-password`, { email });
+      // console.log('FORGOT PASSWORD', response);
       setState({
         ...state,
         email: "",
         buttonText: "Done",
-        success: res.data.message,
+        success: response.data.message,
       });
     } catch (error) {
-      // console.log(error.response.data.error);
-      setState({ ...state, error: error.response.data.error });
+      console.log("FORGOT PW ERROR", error);
+      setState({
+        ...state,
+        buttonText: "Forgot Password",
+        error: error.response.data.error,
+      });
     }
   };
 

@@ -4,10 +4,11 @@ import { getCookie } from "../helpers/auth";
 
 const withUser = (Page) => {
   const WithAuthUser = (props) => <Page {...props} />;
-
   WithAuthUser.getInitialProps = async (context) => {
     const token = getCookie("token", context.req);
-    let user = null;
+    let currentUser = null;
+    let userLinks = [];
+
     if (token) {
       try {
         const response = await axios.get(`${API}/user`, {
@@ -16,14 +17,17 @@ const withUser = (Page) => {
             contentType: "application/json",
           },
         });
-        user = response.data;
+        currentUser = response.data.user;
+        userLinks = response.data.links;
       } catch (error) {
         if (error.response.status === 401) {
-          user = null;
+          currentUser = null;
         }
       }
     }
-    if (user === null) {
+
+    if (currentUser === null) {
+      // redirect
       context.res.writeHead(302, {
         Location: "/",
       });
@@ -31,8 +35,9 @@ const withUser = (Page) => {
     } else {
       return {
         ...(Page.getInitialProps ? await Page.getInitialProps(context) : {}),
-        user,
+        currentUser,
         token,
+        userLinks,
       };
     }
   };

@@ -1,12 +1,12 @@
 import Layout from "../components/Layout";
 import axios from "axios";
-import { API } from "../config";
 import Link from "next/link";
+import { API } from "../config";
 
 const Home = ({ categories }) => {
   const listCategories = () =>
     categories.map((c, i) => (
-      <Link href={`/links/${c.slug}`} key={i}>
+      <Link key={i} href={`/links/${c.slug}`}>
         <a
           style={{ border: "1px solid red" }}
           className="bg-light p-3 col-md-4"
@@ -29,14 +29,16 @@ const Home = ({ categories }) => {
         </a>
       </Link>
     ));
+
   return (
     <Layout>
       <div className="row">
         <div className="col-md-12">
-          <h1 className="font-weight-bold">Browse Categories...</h1>
+          <h1 className="font-weight-bold">Browse Tutorials/Courses</h1>
           <br />
         </div>
       </div>
+
       <div className="row">{listCategories()}</div>
     </Layout>
   );

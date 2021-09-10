@@ -1,28 +1,37 @@
-import Layout from "../../../components/Layout";
-import withAdmin from "../../withAdmin";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import axios from "axios";
 import { API } from "../../../config";
-import { showErrorMessage, showSuccessMessage } from "../../../helpers/alerts";
+import Link from "next/link";
+import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
+import Layout from "../../../components/Layout";
+import withAdmin from "../../withAdmin";
 
 const Read = ({ user, token }) => {
   const [state, setState] = useState({
     error: "",
     success: "",
-    categories: "",
+    categories: [],
   });
-  const { error, success, categories } = state;
 
-  const loadCategories = async () => {
-    const response = await axios.get(`${API}/categories`);
-    console.log(response);
-    setState({ ...state, categories: response.data });
-  };
+  const { error, success, categories } = state;
 
   useEffect(() => {
     loadCategories();
   }, []);
+
+  const loadCategories = async () => {
+    const response = await axios.get(`${API}/categories`);
+    setState({ ...state, categories: response.data });
+  };
+
+  const confirmDelete = (e, slug) => {
+    e.preventDefault();
+    // console.log('delete > ', slug);
+    let answer = window.confirm("Are you sure you want to delete?");
+    if (answer) {
+      handleDelete(slug);
+    }
+  };
 
   const handleDelete = async (slug) => {
     try {
@@ -31,27 +40,16 @@ const Read = ({ user, token }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Category delete success: ", response);
+      console.log("CATEGORY DELETE SUCCESS ", response);
       loadCategories();
     } catch (error) {
-      console.log("Category delete error");
-    }
-  };
-
-  const confirmDelete = (e, slug) => {
-    e.preventDefault();
-    let answer = window.confirm(
-      "Are you sure you want to delete this category?"
-    );
-    if (answer) {
-      handleDelete(slug);
+      console.log("CATEGORY DELETE ", error);
     }
   };
 
   const listCategories = () =>
-    categories &&
     categories.map((c, i) => (
-      <Link href={`/links/${c.slug}`} key={i}>
+      <Link key={i} href={`/links/${c.slug}`}>
         <a
           style={{ border: "1px solid red" }}
           className="bg-light p-3 col-md-6"
@@ -75,10 +73,10 @@ const Read = ({ user, token }) => {
                     Update
                   </button>
                 </Link>
+
                 <button
-                  className="btn btn-sm btn-outline-danger btn-black"
-                  style={{ width: "100%" }}
                   onClick={(e) => confirmDelete(e, c.slug)}
+                  className="btn btn-sm btn-outline-danger btn-block"
                 >
                   Delete
                 </button>
@@ -95,8 +93,10 @@ const Read = ({ user, token }) => {
         <div className="col">
           <h1>List of categories</h1>
           <br />
+          {success && showSuccessMessage(success)}
         </div>
       </div>
+
       <div className="row">{listCategories()}</div>
     </Layout>
   );
