@@ -45,7 +45,7 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
   const listOfLinks = () =>
     allLinks.map((l, i) => (
       <div key={i} className="row alert alert-primary p-2">
-        <div className="col-md-8" onClick={(e) => handleClick(l._id)}>
+        <div className="col-md-8">
           <a href={l.url} target="_blank">
             <h5 className="pt-2">{l.title}</h5>
             <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
@@ -56,10 +56,6 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
         <div className="col-md-4 pt-2">
           <span className="pull-right">
             {moment(l.createdAt).fromNow()} by {l.postedBy.name}
-          </span>
-          <br />
-          <span className="badge text-secondary pull-right">
-            {l.clicks} clicks
           </span>
         </div>
 
@@ -95,19 +91,15 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
   const loadMore = async () => {
     let toSkip = skip + limit;
 
-    const response = await axios.post(
-      `${API}/links`,
-      { skip: toSkip, limit },
+    const response = await axios.get(
+      `${API}/links?skip=${toSkip}&limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
-
-    response.data = response.data.filter(onlyUnique);
-
-    setAllLinks([...allLinks, ...response.data]);
+    setAllLinks([...allLinks, ...response.data].filter(onlyUnique));
     // console.log('allLinks', allLinks);
     // console.log('response.data.links.length', response.data.links.length);
     setSize(response.data.length);
@@ -139,19 +131,15 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
 
 Links.getInitialProps = async ({ req }) => {
   let skip = 0;
-  let limit = 2;
+  let limit = 10;
 
   const token = getCookie("token", req);
 
-  const response = await axios.post(
-    `${API}/links`,
-    { skip, limit },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axios.get(`${API}/links?skip=${skip}&limit=${limit}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return {
     links: response.data,
     totalLinks: response.data.length,
