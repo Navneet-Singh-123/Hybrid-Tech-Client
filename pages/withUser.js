@@ -25,7 +25,6 @@ const withUser = (Page) => {
         }
       }
     }
-
     if (currentUser === null) {
       // redirect
       context.res.writeHead(302, {

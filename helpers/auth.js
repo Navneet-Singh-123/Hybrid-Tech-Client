@@ -82,3 +82,16 @@ export const logout = () => {
   removeCookie("token");
   Router.push("/login");
 };
+
+export const updateUser = (user, next) => {
+  if (process.browser) {
+    if (localStorage.getItem("user")) {
+      let auth = JSON.parse(localStorage.getItem("user"));
+      const { name, email, role, _id } = user;
+      let updated = { name, email, role, _id };
+      auth = updated;
+      localStorage.setItem("user", JSON.stringify(auth));
+      next();
+    }
+  }
+};
