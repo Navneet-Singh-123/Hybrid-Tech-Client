@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import Link from "next/link";
 import axios from "axios";
@@ -20,10 +20,56 @@ const Links = ({
   const [skip, setSkip] = useState(linkSkip);
   const [size, setSize] = useState(totalLinks);
 
+  const [popular, setPopular] = useState([]);
+  useEffect(() => {
+    loadPopular();
+  }, []);
+
+  const loadPopular = async () => {
+    const response = await axios.get(`${API}/link/popular/${category.slug}`);
+    setPopular(response.data);
+    console.log(popular);
+  };
+
   const handleClick = async (linkId) => {
     await axios.put(`${API}/click-count`, { linkId });
     loadUpdatedLinks();
+    loadPopular();
   };
+
+  const listOfPopularLinks = () =>
+    popular.map((l, i) => (
+      <div key={i} className="row alert alert-secondary p-2">
+        <div className="col-md-8" onClick={() => handleClick(l._id)}>
+          <a href={l.url} target="_blank">
+            <h5 className="pt-2">{l.title}</h5>
+            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
+              {l.url}
+            </h6>
+          </a>
+        </div>
+
+        <div className="col-md-4 pt-2">
+          <span className="pull-right">
+            {moment(l.createdAt).fromNow()} by {l.postedBy.name}
+          </span>
+        </div>
+
+        <div className="col-md-12">
+          <span className="badge text-dark">
+            {l.type} {l.medium}
+          </span>
+          {l.categories.map((c, i) => (
+            <span key={i} className="badge text-success">
+              {c.name}
+            </span>
+          ))}
+          <span className="badge text-secondary pull-right">
+            {l.clicks} clicks
+          </span>
+        </div>
+      </div>
+    ));
 
   const loadUpdatedLinks = async () => {
     const response = await axios.get(`${API}/category/${query.slug}`);
@@ -100,15 +146,6 @@ const Links = ({
         </div>
       </div>
       <br />
-      {/*<div className="row">
-                <div className="col-md-8">{listOfLinks()}</div>
-                <div className="col-md-4">
-                    <h2 className="lead">Most popular in {category.name}</h2>
-                    <p>show popular links</p>
-                </div>
-            </div>*/}
-
-      {/*<div className="text-center pt-4 pb-5">{loadMoreButton()}</div>*/}
 
       <InfiniteScroll
         pageStart={0}
@@ -120,7 +157,7 @@ const Links = ({
           <div className="col-md-8">{listOfLinks()}</div>
           <div className="col-md-4">
             <h2 className="lead">Most popular in {category.name}</h2>
-            <p>show popular links</p>
+            <div className="p-3">{listOfPopularLinks()}</div>
           </div>
         </div>
       </InfiniteScroll>
