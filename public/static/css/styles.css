@@ -1,12 +1,74 @@
+/* Progress Bar */
 #nprogress .bar {
   height: 4px !important;
 }
 
+/* Navbar */
 .nav a {
   transition: 0.3s ease-in-out all;
 }
 
 .nav a:hover {
   border-radius: 0px;
+  transition: 0.3s ease-in-out all;
+}
+
+.nav-container-main {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: "Playball", cursive;
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.nav-item-set {
+  display: flex;
+}
+
+.custom-nav-link {
+  color: white !important;
+  transition: 0.3s ease-in-out all;
+}
+
+.custom-nav-link:hover {
+  color: rgb(205, 224, 240) !important;
+  transition: 0.3s ease-in-out all;
+}
+
+/* Home page */
+.category-links-main {
+  border: 1px solid black;
+  transition: 0.3s ease-in-out all;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.category-links-main:hover {
+  background-color: rgb(192, 192, 192);
+  transition: 0.3s ease-in-out all;
+  text-decoration: none;
+}
+.category-img-home {
+  width: 100px;
+  height: 50px;
+}
+
+.links-display {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.links-styling {
+  text-decoration: none !important;
+}
+
+.actual-link {
+  font-size: 12px;
+  color: red;
+  transition: 0.3s ease-in-out all;
+}
+.actual-link:hover {
+  color: rgb(146, 0, 0);
   transition: 0.3s ease-in-out all;
 }

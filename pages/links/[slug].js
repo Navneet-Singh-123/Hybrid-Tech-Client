@@ -61,7 +61,11 @@ const Links = ({
   const listOfPopularLinks = () =>
     popular.map((l, i) => (
       <div key={i} className="row alert alert-secondary p-2">
-        <div className="col-md-8" onClick={() => handleClick(l._id)}>
+        <div
+          className="col-md-8"
+          onClick={() => handleClick(l._id)}
+          style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
+        >
           <a href={l.url} target="_blank">
             <h5 className="pt-2">{l.title}</h5>
             <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
@@ -100,7 +104,11 @@ const Links = ({
   const listOfLinks = () =>
     allLinks.map((l, i) => (
       <div key={i} className="row alert alert-primary p-2">
-        <div className="col-md-8" onClick={(e) => handleClick(l._id)}>
+        <div
+          className="col-md-8"
+          style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
+          onClick={(e) => handleClick(l._id)}
+        >
           <a href={l.url} target="_blank">
             <h5 className="pt-2">{l.title}</h5>
             <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
@@ -160,11 +168,11 @@ const Links = ({
               {renderHTML(category.content || "")}
             </div>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4" style={{ textAlign: "center" }}>
             <img
               src={category.image.url}
               alt={category.name}
-              style={{ width: "auto", maxHeight: "200px" }}
+              style={{ width: "auto", maxHeight: "200px", borderRadius: "50%" }}
             />
           </div>
         </div>

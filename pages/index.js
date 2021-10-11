@@ -24,21 +24,24 @@ const Home = ({ categories }) => {
   const listCategories = () =>
     categories.map((c, i) => (
       <Link key={i} href={`/links/${c.slug}`}>
-        <a
-          style={{ border: "1px solid red" }}
-          className="bg-light p-3 col-md-4"
-        >
+        <a className="p-3 col-md-4 category-links-main">
           <div>
             <div className="row">
               <div className="col-md-4">
                 <img
                   src={c.image && c.image.url}
                   alt={c.name}
-                  style={{ width: "100px", height: "auto" }}
-                  className="pr-3"
+                  className="pr-3 category-img-home"
                 />
               </div>
-              <div className="col-md-8">
+              <div
+                className="col-md-8"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyItems: "center",
+                }}
+              >
                 <h3>{c.name}</h3>
               </div>
             </div>
@@ -49,17 +52,18 @@ const Home = ({ categories }) => {
   const listLinks = () =>
     popular.map((l, i) => (
       <div key={i} className="row alert alert-secondary p-2">
-        <div className="col-md-8" onClick={() => handleClick(l._id)}>
-          <a href={l.url} target="_blank">
+        <div
+          className="col-md-8 links-display"
+          onClick={() => handleClick(l._id)}
+        >
+          <a href={l.url} target="_blank" className="links-styling">
             <h5 className="pt-2">{l.title}</h5>
-            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
-              {l.url}
-            </h6>
+            <h6 className="pt-2 actual-link">{l.url}</h6>
           </a>
         </div>
 
-        <div className="col-md-4 pt-2">
-          <span className="pull-right">
+        <div className="col-md-4 pt-2 ">
+          <span className="float-right">
             {moment(l.createdAt).fromNow()} by {l.postedBy.name}
           </span>
         </div>
@@ -73,8 +77,8 @@ const Home = ({ categories }) => {
               {c.name}
             </span>
           ))}
-          <span className="badge text-secondary pull-right">
-            {l.clicks} clicks
+          <span className="badge text-secondary float-right">
+            {l.clicks} {l.clicks == 0 || l.clicks == 1 ? "View" : "Views"}
           </span>
         </div>
       </div>
@@ -83,15 +87,22 @@ const Home = ({ categories }) => {
   return (
     <Layout>
       <div className="row">
-        <div className="col-md-12">
-          <h1 className="font-weight-bold">Browse Tutorials/Courses</h1>
+        <div className="col-md-12" style={{ padding: 0 }}>
+          <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            Browse Categories
+          </h1>
           <br />
         </div>
       </div>
 
       <div className="row">{listCategories()}</div>
       <div className="row pt-5">
-        <h2 className="font-weight-bold pb-3">Trending</h2>
+        <h2
+          className="font-weight-bold pb-3"
+          style={{ fontFamily: "Aclonica, cursive" }}
+        >
+          Trending
+        </h2>
         <div className="col-md-12 overflow-hidden">{listLinks()}</div>
       </div>
     </Layout>
