@@ -5,12 +5,19 @@ import axios from "axios";
 import { showSuccessMessage, showErrorMessage } from "../helpers/alerts";
 import { API } from "../config";
 import { isAuth } from "../helpers/auth";
+import Head from "next/head";
 
 const Register = () => {
+  const head = () => (
+    <Head>
+      <title>Register</title>
+    </Head>
+  );
+
   const [state, setState] = useState({
-    name: "Ryan",
-    email: "ryan@gmail.com",
-    password: "rrrrrr",
+    name: "",
+    email: "",
+    password: "",
     error: "",
     success: "",
     buttonText: "Register",
@@ -155,8 +162,11 @@ const Register = () => {
 
   return (
     <Layout>
+      {head()}
       <div className="col-md-6 offset-md-3">
-        <h1>Register</h1>
+        <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+          Register
+        </h1>
         <br />
         {success && showSuccessMessage(success)}
         {error && showErrorMessage(error)}

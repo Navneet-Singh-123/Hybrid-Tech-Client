@@ -5,8 +5,15 @@ import Link from "next/link";
 import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import Layout from "../../../components/Layout";
 import withAdmin from "../../withAdmin";
+import Head from "next/head";
 
 const Read = ({ user, token }) => {
+  const head = () => (
+    <Head>
+      <title>Categories | Hybrid Tech</title>
+    </Head>
+  );
+
   const [state, setState] = useState({
     error: "",
     success: "",
@@ -50,21 +57,25 @@ const Read = ({ user, token }) => {
   const listCategories = () =>
     categories.map((c, i) => (
       <Link key={i} href={`/links/${c.slug}`}>
-        <a
-          style={{ border: "1px solid red" }}
-          className="bg-light p-3 col-md-6"
-        >
+        <a className="bg-light p-3 col-md-6 category-links-main">
           <div>
             <div className="row">
               <div className="col-md-3">
                 <img
                   src={c.image && c.image.url}
                   alt={c.name}
-                  style={{ width: "100px", height: "auto" }}
-                  className="pr-3"
+                  style={{ width: "100%", height: "70px" }}
+                  className="pr-3 category-img-home"
                 />
               </div>
-              <div className="col-md-6">
+              <div
+                className="col-md-6"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyItems: "center",
+                }}
+              >
                 <h3>{c.name}</h3>
               </div>
               <div className="col-md-3">
@@ -89,9 +100,12 @@ const Read = ({ user, token }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="row">
         <div className="col">
-          <h1>List of categories</h1>
+          <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            List of categories
+          </h1>
           <br />
           {success && showSuccessMessage(success)}
         </div>

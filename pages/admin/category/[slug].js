@@ -16,8 +16,8 @@ const Update = ({ oldCategory, token }) => {
     success: "",
     buttonText: "Update",
   });
-  const [content, setContent] = useState(oldCategory.content);
 
+  const [content, setContent] = useState(oldCategory.content);
   const { name, success, error, buttonText } = state;
 
   const handleChange = (name) => (e) => {
@@ -93,7 +93,9 @@ const Update = ({ oldCategory, token }) => {
     <Layout>
       <div className="row">
         <div className="col-md-6 offset-md-3">
-          <h1>Update category</h1>
+          <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            Update category
+          </h1>
           <br />
           {success && showSuccessMessage(success)}
           {error && showErrorMessage(error)}
@@ -104,9 +106,13 @@ const Update = ({ oldCategory, token }) => {
   );
 };
 
-Update.getInitialProps = async ({ req, query, token }) => {
+// Server rendering update page with the category and performing initial data
+// population - SEO Optimization
+Update.getInitialProps = async ({ query }) => {
+  // Query: from the front end route
+  // console.log("Called");
   const response = await axios.get(`${API}/category/${query.slug}`);
-  return { oldCategory: response.data.category, token };
+  return { oldCategory: response.data.category };
 };
 
 export default withAdmin(Update);

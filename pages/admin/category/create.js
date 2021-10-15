@@ -8,8 +8,14 @@ import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import Layout from "../../../components/Layout";
 import withAdmin from "../../withAdmin";
 import "react-quill/dist/quill.bubble.css";
+import Head from "next/head";
 
 const Create = ({ user, token }) => {
+  const head = () => (
+    <Head>
+      <title>Create | Hybrid Tech</title>
+    </Head>
+  );
   const [state, setState] = useState({
     name: "",
     error: "",
@@ -21,7 +27,7 @@ const Create = ({ user, token }) => {
   const [imageUploadButtonName, setImageUploadButtonName] =
     useState("Upload image");
 
-  const { name, success, error, image, buttonText, imageUploadText } = state;
+  const { name, success, error, image, buttonText } = state;
 
   const handleChange = (name) => (e) => {
     setState({ ...state, [name]: e.target.value, error: "", success: "" });
@@ -75,7 +81,6 @@ const Create = ({ user, token }) => {
       setState({
         ...state,
         name: "",
-        formData: "",
         buttonText: "Created",
         imageUploadText: "Upload image",
         success: `${response.data.name} is created`,
@@ -133,9 +138,12 @@ const Create = ({ user, token }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="row">
         <div className="col-md-6 offset-md-3">
-          <h1>Create category</h1>
+          <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            Create category
+          </h1>
           <br />
           {success && showSuccessMessage(success)}
           {error && showErrorMessage(error)}

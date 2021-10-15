@@ -2,17 +2,23 @@ import { useState } from "react";
 import Layout from "../../../components/Layout";
 import Link from "next/link";
 import axios from "axios";
-import renderHTML from "react-render-html";
 import moment from "moment";
 import { API } from "../../../config";
 import InfiniteScroll from "react-infinite-scroller";
 import withAdmin from "../../withAdmin";
 import { getCookie } from "../../../helpers/auth";
+import Head from "next/head";
 
 const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
+  const head = () => (
+    <Head>
+      <title>Links | Hybrid Tech</title>
+    </Head>
+  );
+
   const [allLinks, setAllLinks] = useState(links);
   const [limit, setLimit] = useState(linksLimit);
-  const [skip, setSkip] = useState(0);
+  const [skip, setSkip] = useState(linkSkip);
   const [size, setSize] = useState(totalLinks);
 
   const confirmDelete = (e, id) => {
@@ -38,44 +44,41 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
     }
   };
 
-  const handleClick = (id) => {
-    console.log("Clicked");
-  };
-
   const listOfLinks = () =>
-    allLinks.map((l, i) => (
+    allLinks.map((link, i) => (
       <div key={i} className="row alert alert-primary p-2">
         <div className="col-md-8">
-          <a href={l.url} target="_blank">
-            <h5 className="pt-2">{l.title}</h5>
-            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
-              {l.url}
+          <a href={link.url} target="_blank" className="links-styling">
+            <h5 className="pt-2">{link.title}</h5>
+            <h6 className="pt-2 actual-link" style={{ fontSize: "12px" }}>
+              {link.url}
             </h6>
           </a>
         </div>
         <div className="col-md-4 pt-2">
-          <span className="pull-right">
-            {moment(l.createdAt).fromNow()} by {l.postedBy.name}
+          <span className="float-right">
+            {moment(link.createdAt).fromNow()} by {link.postedBy.name}
           </span>
         </div>
 
         <div className="col-md-12">
           <span className="badge text-dark">
-            {l.type} / {l.medium}
+            {link.type} / {link.medium}
           </span>
-          {l.categories.map((c, i) => (
+          {link.categories.map((c, i) => (
             <span key={i} className="badge text-success">
               {c.name}
             </span>
           ))}
 
           <span
-            onClick={(e) => confirmDelete(e, l._id)}
+            onClick={(e) => confirmDelete(e, link._id)}
             className="badge text-danger pull-right"
+            style={{ cursor: "pointer" }}
           >
             Delete
           </span>
-          <Link href={`/user/link/${l._id}`}>
+          <Link href={`/user/link/${link._id}`}>
             <a>
               <span className="badge text-warning pull-right">Update</span>
             </a>
@@ -108,9 +111,15 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="row">
         <div className="col-md-12">
-          <h1 className="display-4 font-weight-bold">All Links</h1>
+          <h1
+            className="display-4 font-weight-bold"
+            style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}
+          >
+            All Links
+          </h1>
         </div>
       </div>
       <br />
@@ -129,12 +138,11 @@ const Links = ({ token, links, totalLinks, linksLimit, linkSkip }) => {
   );
 };
 
+// Server side rendering of the links
 Links.getInitialProps = async ({ req }) => {
   let skip = 0;
   let limit = 10;
-
   const token = getCookie("token", req);
-
   const response = await axios.get(`${API}/links?skip=${skip}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,

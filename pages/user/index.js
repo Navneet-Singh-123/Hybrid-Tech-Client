@@ -4,13 +4,17 @@ import Router from "next/router";
 import axios from "axios";
 import moment from "moment";
 import { API } from "../../config";
-import { getCookie } from "../../helpers/auth";
 import withUser from "../withUser";
 import { useState } from "react";
+import Head from "next/head";
 
-const User = ({ currentUser, userLinks, token }) => {
+const User = ({ userLinks, token }) => {
+  const head = () => (
+    <Head>
+      <title>Dashboard | Hybrid Tech</title>
+    </Head>
+  );
   const [allLinks, setAllLinks] = useState(userLinks);
-  const [user, setUser] = useState(currentUser);
 
   const confirmDelete = (e, id) => {
     e.preventDefault();
@@ -22,7 +26,6 @@ const User = ({ currentUser, userLinks, token }) => {
   };
 
   const handleDelete = async (id) => {
-    console.log("delete link > ", id);
     try {
       const response = await axios.delete(`${API}/link/${id}`, {
         headers: {
@@ -37,11 +40,6 @@ const User = ({ currentUser, userLinks, token }) => {
     }
   };
 
-  const handleClick = async (linkId) => {
-    await axios.put(`${API}/click-count`, { linkId });
-    loadUpdatedLinks();
-  };
-
   const loadUpdatedLinks = async () => {
     if (token) {
       try {
@@ -51,6 +49,7 @@ const User = ({ currentUser, userLinks, token }) => {
             contentType: "application/json",
           },
         });
+        console.log(response.data);
         setUser(response.data.user);
         setAllLinks(response.data.links);
       } catch (error) {
@@ -62,18 +61,16 @@ const User = ({ currentUser, userLinks, token }) => {
   const listOfLinks = () =>
     allLinks.map((l, i) => (
       <div key={i} className="row alert alert-primary p-2">
-        <div className="col-md-8">
-          <a href={l.url} target="_blank">
+        <div className="col-md-8 links-display">
+          <a href={l.url} target="_blank" className="links-styling">
             <h5 className="pt-2">{l.title}</h5>
-            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
+            <h6 className="pt-2 actual-link" style={{ fontSize: "12px" }}>
               {l.url}
             </h6>
           </a>
         </div>
         <div className="col-md-4 pt-2">
-          <span className="pull-right">
-            {moment(l.createdAt).fromNow()} by {l.postedBy.name}
-          </span>
+          <span className="float-right">{moment(l.createdAt).fromNow()}</span>
         </div>
 
         <div className="col-md-12">
@@ -87,12 +84,18 @@ const User = ({ currentUser, userLinks, token }) => {
           ))}
 
           <Link href={`/user/link/${l._id}`}>
-            <span className="badge text-warning pull-right">Update</span>
+            <span
+              className="badge text-warning pull-right"
+              style={{ cursor: "pointer" }}
+            >
+              Update
+            </span>
           </Link>
 
           <span
             onClick={(e) => confirmDelete(e, l._id)}
             className="badge text-danger pull-right"
+            style={{ cursor: "pointer" }}
           >
             Delete
           </span>
@@ -102,9 +105,9 @@ const User = ({ currentUser, userLinks, token }) => {
 
   return (
     <Layout>
-      <h1>
-        {user.name}'s dashboard{" "}
-        <span className="text-danger">/{user.role}</span>
+      {head()}
+      <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+        My dashboard
       </h1>
       <hr />
 
@@ -113,19 +116,25 @@ const User = ({ currentUser, userLinks, token }) => {
           <ul className="nav flex-column">
             <li className="nav-item">
               <Link href="/user/link/create">
-                <a className="nav link">Submit a link</a>
+                <a className="nav-link" style={{ display: "inline-block" }}>
+                  Submit a link
+                </a>
               </Link>
             </li>
             <li className="nav-item">
               <Link href="/user/profile/update">
-                <a className="nav link">Update profile</a>
+                <a className="nav-link" style={{ display: "inline-block" }}>
+                  Update profile
+                </a>
               </Link>
             </li>
           </ul>
         </div>
 
         <div className="col-md-8">
-          <h2>Your links</h2>
+          <h2 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            Your links
+          </h2>
           <br />
           {listOfLinks()}
         </div>

@@ -5,12 +5,24 @@ import NProgress from "nprogress";
 import Router from "next/router";
 import "nprogress/nprogress.css";
 import { isAuth, logout } from "../helpers/auth";
+import { useEffect, useState } from "react";
 
 Router.onRouteChangeStart = (url) => NProgress.start();
 Router.onRouteChangeComplete = (url) => NProgress.done();
 Router.onRouteChangeError = (url) => NProgress.done();
+NProgress.configure({ showSpinner: false });
 
 const Layout = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticted] = useState(false);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    if (isAuth()) {
+      setUser(isAuth());
+      setIsAuthenticted(true);
+    }
+  }, []);
+
   const head = () => (
     <Head>
       <link
@@ -51,7 +63,7 @@ const Layout = ({ children }) => {
           </li>
         </div>
         <div className="nav">
-          {!isAuth() && (
+          {!isAuthenticated && (
             <>
               <li className="nav-item">
                 <Link href="/login">
@@ -66,25 +78,29 @@ const Layout = ({ children }) => {
             </>
           )}
 
-          {isAuth() && isAuth().role === "admin" && (
+          {isAuthenticated && user.role === "admin" && (
             <li className="nav-item ml-auto">
               <Link href="/admin">
-                <a className="nav-link custom-nav-link">{isAuth().name}</a>
+                <a className="nav-link custom-nav-link">{user.name}</a>
               </Link>
             </li>
           )}
 
-          {isAuth() && isAuth().role === "subscriber" && (
+          {isAuthenticated && user.role === "subscriber" && (
             <li className="nav-item ml-auto">
               <Link href="/user">
-                <a className="nav-link custom-nav-link">{isAuth().name}</a>
+                <a className="nav-link custom-nav-link">{user.name}</a>
               </Link>
             </li>
           )}
 
-          {isAuth() && (
+          {isAuthenticated && (
             <li className="nav-item ml-auto">
-              <a onClick={logout} className="nav-link custom-nav-link">
+              <a
+                onClick={logout}
+                className="nav-link custom-nav-link"
+                style={{ cursor: "pointer" }}
+              >
                 Logout
               </a>
             </li>

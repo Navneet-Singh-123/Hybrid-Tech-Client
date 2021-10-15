@@ -6,8 +6,15 @@ import { getCookie, isAuth } from "../../../helpers/auth";
 import { API } from "../../../config";
 import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import React from "react";
+import Head from "next/head";
 
 const Create = ({ token }) => {
+  const head = () => (
+    <Head>
+      <title>Submit Link</title>
+    </Head>
+  );
+
   // state
   const [state, setState] = useState({
     title: "",
@@ -51,7 +58,6 @@ const Create = ({ token }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.table({ title, url, categories, type, medium });
     try {
       const response = await axios.post(
         `${API}/link`,
@@ -98,6 +104,7 @@ const Create = ({ token }) => {
             value="video"
             className="from-check-input"
             name="medium"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Video
         </label>
@@ -108,12 +115,13 @@ const Create = ({ token }) => {
           <input
             type="radio"
             onClick={handleMediumClick}
-            checked={medium === "book"}
-            value="book"
+            checked={medium === "article"}
+            value="article"
             className="from-check-input"
             name="medium"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
-          Book
+          Article
         </label>
       </div>
     </React.Fragment>
@@ -130,6 +138,7 @@ const Create = ({ token }) => {
             value="free"
             className="from-check-input"
             name="type"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Free
         </label>
@@ -144,6 +153,7 @@ const Create = ({ token }) => {
             value="paid"
             className="from-check-input"
             name="type"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Paid
         </label>
@@ -161,11 +171,9 @@ const Create = ({ token }) => {
     } else {
       all.splice(clickedCategory, 1);
     }
-    console.log("all >> categories", all);
     setState({ ...state, categories: all, success: "", error: "" });
   };
 
-  // show categories > checkbox
   const showCategories = () => {
     return (
       loadedCategories &&
@@ -217,8 +225,12 @@ const Create = ({ token }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="row">
-        <div className="col-md-12">
+        <div
+          className="col-md-12"
+          style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}
+        >
           <h1>Submit Link/URL</h1>
           <br />
         </div>

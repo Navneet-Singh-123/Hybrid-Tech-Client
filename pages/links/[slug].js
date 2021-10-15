@@ -21,29 +21,17 @@ const Links = ({
   const [size, setSize] = useState(totalLinks);
   const [popular, setPopular] = useState([]);
 
-  const stripHTML = (data) => data.replace(/<\/?[^>]+(>|$)/g, "");
-
   const head = () => (
     <Head>
       <title>
         {category.name} | {APP_NAME}
       </title>
-      <meta
-        name="description"
-        content={stripHTML(category.content.substring(0, 150))}
-      />
-      <meta property="og:title" content={category.name} />
-      <meta
-        property="og:description"
-        content={stripHTML(category.content.substring(0, 160))}
-      />
-      <meta property="og:image" content={category.image.url} />
-      <meta property="og:image:secure_url" content={category.image.url} />
     </Head>
   );
 
   useEffect(() => {
     loadPopular();
+    console.log("Popular Link:", popular);
   }, []);
 
   const loadPopular = async () => {
@@ -62,22 +50,19 @@ const Links = ({
     popular.map((l, i) => (
       <div key={i} className="row alert alert-secondary p-2">
         <div
-          className="col-md-8"
+          className="col-md-8 links-display"
           onClick={() => handleClick(l._id)}
-          style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
         >
-          <a href={l.url} target="_blank">
+          <a href={l.url} target="_blank" className="links-styling">
             <h5 className="pt-2">{l.title}</h5>
-            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
+            <h6 className="pt-2 actual-link" style={{ fontSize: "12px" }}>
               {l.url}
             </h6>
           </a>
         </div>
 
         <div className="col-md-4 pt-2">
-          <span className="pull-right">
-            {moment(l.createdAt).fromNow()} by {l.postedBy.name}
-          </span>
+          <span className="float-right">By - {l.postedBy.name}</span>
         </div>
 
         <div className="col-md-12">
@@ -89,8 +74,8 @@ const Links = ({
               {c.name}
             </span>
           ))}
-          <span className="badge text-secondary pull-right">
-            {l.clicks} clicks
+          <span className="badge text-secondary float-right">
+            {l.clicks} Views
           </span>
         </div>
       </div>
@@ -105,26 +90,22 @@ const Links = ({
     allLinks.map((l, i) => (
       <div key={i} className="row alert alert-primary p-2">
         <div
-          className="col-md-8"
-          style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
+          className="col-md-8 links-display"
           onClick={(e) => handleClick(l._id)}
         >
-          <a href={l.url} target="_blank">
+          <a href={l.url} target="_blank" className="links-styling">
             <h5 className="pt-2">{l.title}</h5>
-            <h6 className="pt-2 text-danger" style={{ fontSize: "12px" }}>
+            <h6 className="pt-2 actual-link" style={{ fontSize: "12px" }}>
               {l.url}
             </h6>
           </a>
         </div>
         <div className="col-md-4 pt-2">
-          <span className="pull-right">
+          <span className="float-right">
             {moment(l.createdAt).fromNow()} by {l.postedBy.name}
           </span>
-          <br />
-          <span className="badge text-secondary pull-right">
-            {l.clicks} clicks
-          </span>
         </div>
+
         <div className="col-md-12">
           <span className="badge text-dark">
             {l.type} / {l.medium}
@@ -134,6 +115,9 @@ const Links = ({
               {c.name}
             </span>
           ))}
+          <span className="badge text-secondary float-right">
+            {l.clicks} {l.clicks == 0 || l.clicks == 1 ? "View" : "Views"}
+          </span>
         </div>
       </div>
     ));
@@ -161,8 +145,11 @@ const Links = ({
       <Layout>
         <div className="row">
           <div className="col-md-8">
-            <h1 className="display-4 font-weight-bold">
-              {category.name} - URL/Links
+            <h1
+              className="display-4 font-weight-bold"
+              style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}
+            >
+              {category.name}
             </h1>
             <div className="lead alert alert-secondary pt-4">
               {renderHTML(category.content || "")}

@@ -84,6 +84,7 @@ export const logout = () => {
 };
 
 export const updateUser = (user, next) => {
+  // Update user in local storage
   if (process.browser) {
     if (localStorage.getItem("user")) {
       let auth = JSON.parse(localStorage.getItem("user"));

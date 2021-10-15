@@ -6,8 +6,15 @@ import { showSuccessMessage, showErrorMessage } from "../../../helpers/alerts";
 import { updateUser } from "../../../helpers/auth";
 import { API } from "../../../config";
 import withUser from "../../withUser";
+import Head from "next/head";
 
 const Update = ({ currentUser, token }) => {
+  const head = () => (
+    <Head>
+      <title>Profile Update | Hybrid Tech</title>
+    </Head>
+  );
+
   const [state, setState] = useState({
     name: currentUser.name,
     email: currentUser.email,
@@ -38,7 +45,7 @@ const Update = ({ currentUser, token }) => {
   }, []);
 
   const handleToggle = (c) => () => {
-    // return the first index or -1
+    // returning the first index or -1
     const clickedCategory = categories.indexOf(c);
     const all = [...categories];
 
@@ -47,11 +54,10 @@ const Update = ({ currentUser, token }) => {
     } else {
       all.splice(clickedCategory, 1);
     }
-    console.log("all >> categories", all);
+
     setState({ ...state, categories: all, success: "", error: "" });
   };
 
-  // show categories > checkbox
   const showCategories = () => {
     return (
       loadedCategories &&
@@ -160,8 +166,11 @@ const Update = ({ currentUser, token }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="col-md-6 offset-md-3">
-        <h1>Update Profile</h1>
+        <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+          Update Profile
+        </h1>
         <br />
         {success && showSuccessMessage(success)}
         {error && showErrorMessage(error)}

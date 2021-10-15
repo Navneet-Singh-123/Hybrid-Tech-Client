@@ -1,11 +1,18 @@
 import Layout from "../components/Layout";
 import axios from "axios";
 import Link from "next/link";
-import { API } from "../config";
+import { API, APP_NAME } from "../config";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import Head from "next/head";
 
 const Home = ({ categories }) => {
+  const head = () => (
+    <Head>
+      <title>{APP_NAME}</title>
+    </Head>
+  );
+
   const [popular, setPopular] = useState([]);
   useEffect(() => {
     loadPopular();
@@ -70,7 +77,7 @@ const Home = ({ categories }) => {
 
         <div className="col-md-12">
           <span className="badge text-dark">
-            {l.type} {l.medium}
+            {l.type} / {l.medium}
           </span>
           {l.categories.map((c, i) => (
             <span key={i} className="badge text-success">
@@ -86,6 +93,7 @@ const Home = ({ categories }) => {
 
   return (
     <Layout>
+      {head()}
       <div className="row">
         <div className="col-md-12" style={{ padding: 0 }}>
           <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>

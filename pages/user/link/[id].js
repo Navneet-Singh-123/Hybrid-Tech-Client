@@ -54,17 +54,16 @@ const Update = ({ oldLink, token }) => {
     e.preventDefault();
     // console.table({ title, url, categories, type, medium });
     // use update link based on logged in user role
-
-    let dynamicUpdateUrl;
+    let updateURL;
     if (isAuth() && isAuth().role === "admin") {
-      dynamicUpdateUrl = `${API}/link/admin/${oldLink._id}`;
+      updateURL = `${API}/link/admin/${oldLink._id}`;
     } else {
-      dynamicUpdateUrl = `${API}/link/${oldLink._id}`;
+      updateURL = `${API}/link/${oldLink._id}`;
     }
 
     try {
       const response = await axios.put(
-        dynamicUpdateUrl,
+        updateURL,
         { title, url, categories, type, medium },
         {
           headers: {
@@ -98,6 +97,7 @@ const Update = ({ oldLink, token }) => {
             value="video"
             className="from-check-input"
             name="medium"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Video
         </label>
@@ -108,12 +108,13 @@ const Update = ({ oldLink, token }) => {
           <input
             type="radio"
             onClick={handleMediumClick}
-            checked={medium === "book"}
-            value="book"
+            checked={medium === "article"}
+            value="article"
             className="from-check-input"
             name="medium"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
-          Book
+          Article
         </label>
       </div>
     </React.Fragment>
@@ -130,6 +131,7 @@ const Update = ({ oldLink, token }) => {
             value="free"
             className="from-check-input"
             name="type"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Free
         </label>
@@ -144,6 +146,7 @@ const Update = ({ oldLink, token }) => {
             value="paid"
             className="from-check-input"
             name="type"
+            onChange={(e) => console.log("Clicked")}
           />{" "}
           Paid
         </label>
@@ -161,7 +164,6 @@ const Update = ({ oldLink, token }) => {
     } else {
       all.splice(clickedCategory, 1);
     }
-    console.log("all >> categories", all);
     setState({ ...state, categories: all, success: "", error: "" });
   };
 
@@ -220,7 +222,9 @@ const Update = ({ oldLink, token }) => {
     <Layout>
       <div className="row">
         <div className="col-md-12">
-          <h1>Update Link/URL</h1>
+          <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+            Update Link/URL
+          </h1>
           <br />
         </div>
       </div>
@@ -251,9 +255,9 @@ const Update = ({ oldLink, token }) => {
   );
 };
 
-Update.getInitialProps = async ({ req, token, query }) => {
+Update.getInitialProps = async ({ query }) => {
   const response = await axios.get(`${API}/link/${query.id}`);
-  return { oldLink: response.data, token };
+  return { oldLink: response.data };
 };
 
 export default withUser(Update);

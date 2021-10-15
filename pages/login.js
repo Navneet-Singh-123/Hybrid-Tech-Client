@@ -6,6 +6,7 @@ import axios from "axios";
 import { showSuccessMessage, showErrorMessage } from "../helpers/alerts";
 import { API } from "../config";
 import { authenticate, isAuth } from "../helpers/auth";
+import Head from "next/head";
 
 const Login = () => {
   const [state, setState] = useState({
@@ -15,6 +16,12 @@ const Login = () => {
     success: "",
     buttonText: "Login",
   });
+
+  const head = () => (
+    <Head>
+      <title>Login</title>
+    </Head>
+  );
 
   useEffect(() => {
     isAuth() && Router.push("/");
@@ -86,8 +93,11 @@ const Login = () => {
 
   return (
     <Layout>
+      {head()}
       <div className="col-md-6 offset-md-3">
-        <h1>Login</h1>
+        <h1 style={{ fontFamily: "Aclonica, cursive", fontWeight: "bold" }}>
+          Login
+        </h1>
         <br />
         {success && showSuccessMessage(success)}
         {error && showErrorMessage(error)}
