@@ -47,7 +47,7 @@ const Login = () => {
         email,
         password,
       });
-      // console.log(response); // data > token / user
+      console.log(response); // data > token / user
       authenticate(response, () =>
         isAuth() && isAuth().role === "admin"
           ? Router.push("/admin")
